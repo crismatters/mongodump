@@ -4,9 +4,9 @@
 # Set the following variables as per your requirement
 #=====================================================================
 # Backup directory
-BACKUPS_DIR="/home/crismatters/backups/"
+BACKUPS_DIR="/var/backups/"
 # MongoDB Database
-MONGO_DATABASE="coedevops"
+MONGO_DATABASE="testDB"
 # MongoDB URI connection string format
 MONGODB_URI=$MONGODB_URI
 # Days to keep the backup
