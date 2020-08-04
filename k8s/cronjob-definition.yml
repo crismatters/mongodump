@@ -1,0 +1,28 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: mongodb-backup-cronjob
+spec:
+  schedule: "00 18 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: mongodump-container
+            image: mongo:latest
+            volumeMounts:
+            - mountPath: /var/backups
+              name: data
+            command: ["sh", "-c", "date;sh /var/backups/backup-script.sh"]
+            env:
+            - name: MONGODB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: mongodump-secret
+                  key: MONGODB_URI
+          volumes:
+          - name: data
+            persistentVolumeClaim:
+              claimName: backup-mongodb
+          restartPolicy: Never

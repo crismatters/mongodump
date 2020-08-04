@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodump-deploy
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: mongodump-deploy
+      labels:
+        app: mongodump
+    spec:
+      containers:
+      - name: mongodump-container
+        image: mongo:latest
+        volumeMounts:
+        - mountPath: /var/backups
+          name: data
+        readinessProbe:
+          exec:
+            command:
+            - mongo
+            - --eval
+            - "db.adminCommand('ping')"
+        env:
+        - name: MONGODB_URI
+          valueFrom:
+            secretKeyRef:
+              name: mongodump-secret
+              key: MONGODB_URI
+        ports:
+        - containerPort: 27017
+          name: mongodump-port
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: backup-mongodb
+  selector:
+    matchLabels:
+        app: mongodump
